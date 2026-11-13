@@ -7,13 +7,14 @@
 ![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
 ![Game](https://img.shields.io/badge/Slay_The_Spire_2-v0.107.1+-red.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-lightgrey.svg)
+![Development](https://img.shields.io/badge/Development-AI--Assisted-blueviolet.svg)
 ![Author](https://img.shields.io/badge/Developer-0xb1-success.svg)
 
-*A Slay the Spire 2 multiplayer mod that lifts the vanilla 4-player lobby cap. Gather your party and climb the Spire together!*
+*An AI-assisted Slay the Spire 2 multiplayer mod that lifts the vanilla 4-player lobby cap. Gather your party and climb the Spire together!*
 
 </div>
 
-**IncreasePlayerLimit** expands the cooperative multiplayer capacity in Slay the Spire 2. By default, it seamlessly supports **8 players** and can be configured up to **16 players** directly from the in-game settings screen.
+**IncreasePlayerLimit** is an open-source, AI-assisted mod expanding cooperative multiplayer capacity in Slay the Spire 2. By default, it seamlessly supports **8 players** and can be configured up to **16 players** directly from the in-game settings screen.
 
 <br>
 
@@ -41,35 +42,35 @@
 
 ## 🎮 Installation
 
+Pre-packaged releases are separated per platform with one-click installers included.
+
 ### Windows
 
-1. Download the latest `IncreasePlayerLimit-v[version].zip` from the **Releases** page.
-2. Extract the archive and copy the inner `IncreasePlayerLimit` folder into your game directory: `<Slay the Spire 2>/mods/`.
-3. Launch the game. The mod will load automatically.
+1. Download `IncreasePlayerLimit-v[version]-Windows.zip` from [**Releases**](../../releases).
+2. Extract the archive.
+3. Run `Install.bat` to install automatically (or manually copy the `IncreasePlayerLimit` folder to `<Slay the Spire 2>/mods/`).
+4. Launch the game.
 
 ### macOS (Apple Silicon)
 
 macOS requires placing the mod inside the `.app` bundle and launching under Rosetta 2.
 
-1. Download `IncreasePlayerLimit-v[version].zip`.
-2. Extract the archive and place the `IncreasePlayerLimit` folder inside:
-   ```
-   <Slay the Spire 2>/SlayTheSpire2.app/Contents/MacOS/mods/
-   ```
-3. To bypass Steam initialization errors when launching directly, create a `steam_appid.txt` file next to the game executable with Steam running:
-   ```bash
-   echo "2868840" > "$HOME/Library/Application Support/Steam/steamapps/common/Slay the Spire 2/SlayTheSpire2.app/Contents/MacOS/steam_appid.txt"
-   ```
+1. Download `IncreasePlayerLimit-v[version]-macOS.zip` from [**Releases**](../../releases).
+2. Extract the archive.
+3. Double-click `Install.command` (or run `./install.sh` in Terminal) for automatic installation and `steam_appid.txt` configuration.
+   - *Manual alternative:* Copy the `IncreasePlayerLimit` folder to:
+     ```
+     <Slay the Spire 2>/SlayTheSpire2.app/Contents/MacOS/mods/
+     ```
+     and create `steam_appid.txt` containing `2868840` in `<Slay the Spire 2>/SlayTheSpire2.app/Contents/MacOS/`.
 4. Run the game under Rosetta 2 (right-click `SlayTheSpire2.app` > **Get Info** > check **"Open using Rosetta"**).
 
 ### Linux (Steam Deck / Desktop)
 
-1. Download `IncreasePlayerLimit-v[version].zip`.
-2. Extract and copy the `IncreasePlayerLimit` folder into:
-   ```
-   <Slay the Spire 2>/mods/
-   ```
-3. Launch the game via Steam. Native dependencies (`libgcc-s1`, `libstdc++6`, `libunwind8`) are handled automatically.
+1. Download `IncreasePlayerLimit-v[version]-Linux.zip` from [**Releases**](../../releases).
+2. Extract the archive.
+3. Run `./install.sh` in Terminal for automatic installation (or manually copy the `IncreasePlayerLimit` folder to `<Slay the Spire 2>/mods/`).
+4. Launch the game via Steam. Native dependencies (`libgcc-s1`, `libstdc++6`, `libunwind8`) are handled automatically.
 
 > **Note:** All players in the party must install the mod. Local preferences can differ; the host's configured limit governs the active lobby capacity.
 
@@ -98,10 +99,22 @@ Prerequisites:
 git clone https://github.com/0xb01/STS2-IncreasePlayerLimit.git
 cd STS2-IncreasePlayerLimit
 
-# Build release package
+# Windows: Build all release packages
 pwsh ./tools/build_release.ps1
+
+# Linux / macOS: Build all release packages
+./tools/build_release.sh
 ```
-The output package will be generated under `build/IncreasePlayerLimit-v0.1.3.zip`.
+
+Packages are generated under `build/`:
+- `IncreasePlayerLimit-v[version]-Windows.zip` (with `Install.bat` & `helper.ps1`)
+- `IncreasePlayerLimit-v[version]-macOS.zip` (with `Install.command` & `install.sh`)
+- `IncreasePlayerLimit-v[version]-Linux.zip` (with `install.sh`)
+- `IncreasePlayerLimit-v[version].zip` (universal manual folder)
+
+## 🤖 AI Assistance
+
+This project is developed with AI assistance—architecture, Harmony patch transpilers, cross-platform compatibility layers, and UI layout algorithms were designed and iterated collaboratively with AI tooling.
 
 ## 📜 License
 
