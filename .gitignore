@@ -1,0 +1,44 @@
+# Build & Package outputs
+build/
+bin/
+obj/
+out/
+_zip_stage/
+*.zip
+*.pck
+
+# External / unmanaged game binaries
+libs/
+
+# Godot Engine Cache & Exports
+.godot/
+/android/
+.tools/
+*.translation
+
+# IDE & Editor state
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosv
+*.userprefs
+*.sln.docstates
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS Metadata
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# Logs & Local User Configs
+*.log
+config.ini
