@@ -4,7 +4,7 @@
 
 [**Changelog**](docu/Changelog.md)
 
-![Version](https://img.shields.io/badge/Version-0.1.3-blue.svg)
+![Version](https://img.shields.io/badge/Version-0.1.4-blue.svg)
 ![Game](https://img.shields.io/badge/Slay_The_Spire_2-v0.111.1+-red.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-lightgrey.svg)
 ![Development](https://img.shields.io/badge/Development-AI--Assisted-blueviolet.svg)

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.4 Version Changelog
+
+### Fixes & Compatibility
+* **Game Update Support:** Full compatibility with Slay the Spire 2 **v0.111.1+**.
+* **Type Refactor Fix:** Updated network serialization patches to target `StartRunLobbyPlayer` after upstream `LobbyPlayer` refactor.
+* **Lobby Constructor & MaxPlayers:** Updated `StartRunLobby` patches to support new 5-param constructor and private `_maxPlayers` field.
+* **Network Idempotency:** Added protection against duplicate message handler registration.
+* **Treasure Skip Polish:** Unified relic room patches and used native `SkipRelicLocally`.
+* **Simplified Documentation:** Rewrote `README.md` in simple, plain English.
+
+---
+
 ## 0.1.3 Version Changelog (Revamped by 0xb1)
 
 ### Features & Updates

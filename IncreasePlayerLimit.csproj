@@ -9,7 +9,7 @@
     <Product>IncreasePlayerLimit</Product>
     <Description>A Slay the Spire 2 multiplayer mod that lifts the vanilla 4-player lobby limit.</Description>
     <Authors>0xb1</Authors>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <LangVersion>13</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>

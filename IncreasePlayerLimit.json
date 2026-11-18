@@ -2,7 +2,7 @@
   "id": "IncreasePlayerLimit",
   "name": "IncreasePlayerLimit",
   "author": "0xb1",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Increases multiplayer lobby capacity and scales game elements for larger parties.",
   "has_pck": true,
   "has_dll": true,
