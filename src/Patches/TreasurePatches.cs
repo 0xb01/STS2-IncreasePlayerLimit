@@ -108,42 +108,48 @@ public static class TreasurePatches
 		private static void Postfix(NTreasureRoomRelicCollection __instance)
 		{
 			List<NTreasureRoomRelicHolder>? holdersInUse = GetHoldersInUse(__instance);
-			if (holdersInUse == null || holdersInUse.Count <= ModConfig.VanillaMultiplayerHolderCount)
+			if (holdersInUse != null && holdersInUse.Count > ModConfig.VanillaMultiplayerHolderCount)
 			{
-				return;
+				float minX = float.MaxValue;
+				float maxX = float.MinValue;
+				float topY = float.MaxValue;
+				float bottomY = float.MinValue;
+
+				for (int i = 0; i < ModConfig.VanillaMultiplayerHolderCount; i++)
+				{
+					Vector2 position = holdersInUse[i].Position;
+					minX = Math.Min(minX, position.X);
+					maxX = Math.Max(maxX, position.X);
+					topY = Math.Min(topY, position.Y);
+					bottomY = Math.Max(bottomY, position.Y);
+				}
+
+				int holderCount = holdersInUse.Count;
+				int maxColumns = holderCount >= 8 ? ModConfig.VanillaMultiplayerHolderCount : Math.Min(ModConfig.VanillaMultiplayerHolderCount, holderCount);
+				maxColumns = Math.Max(2, maxColumns);
+				int rowCount = (int)Math.Ceiling(holderCount / (float)maxColumns);
+				float centerX = (minX + maxX) * 0.5f;
+				float centerY = (topY + bottomY) * 0.5f;
+				float xStep = (maxX - minX) / Math.Max(1, maxColumns - 1);
+				xStep = xStep > 0f ? Math.Max(MinRelicHolderXStep, xStep) : FallbackRelicHolderXStep;
+				float yStep = Math.Max(MinRelicHolderYStep, Math.Abs(bottomY - topY));
+
+				int startIndex = 0;
+				for (int i = 0; i < rowCount; i++)
+				{
+					int count = Math.Min(maxColumns, holderCount - startIndex);
+					float y = centerY + (i - (rowCount - 1) * 0.5f) * yStep;
+					LayoutRow(holdersInUse, startIndex, count, y, centerX, xStep);
+					startIndex += count;
+				}
 			}
 
-			float minX = float.MaxValue;
-			float maxX = float.MinValue;
-			float topY = float.MaxValue;
-			float bottomY = float.MinValue;
-
-			for (int i = 0; i < ModConfig.VanillaMultiplayerHolderCount; i++)
+			if (EnsureTreasureSkipButton(__instance, out NChoiceSelectionSkipButton? button) && button != null)
 			{
-				Vector2 position = holdersInUse[i].Position;
-				minX = Math.Min(minX, position.X);
-				maxX = Math.Max(maxX, position.X);
-				topY = Math.Min(topY, position.Y);
-				bottomY = Math.Max(bottomY, position.Y);
-			}
-
-			int holderCount = holdersInUse.Count;
-			int maxColumns = holderCount >= 8 ? ModConfig.VanillaMultiplayerHolderCount : Math.Min(ModConfig.VanillaMultiplayerHolderCount, holderCount);
-			maxColumns = Math.Max(2, maxColumns);
-			int rowCount = (int)Math.Ceiling(holderCount / (float)maxColumns);
-			float centerX = (minX + maxX) * 0.5f;
-			float centerY = (topY + bottomY) * 0.5f;
-			float xStep = (maxX - minX) / Math.Max(1, maxColumns - 1);
-			xStep = xStep > 0f ? Math.Max(MinRelicHolderXStep, xStep) : FallbackRelicHolderXStep;
-			float yStep = Math.Max(MinRelicHolderYStep, Math.Abs(bottomY - topY));
-
-			int startIndex = 0;
-			for (int i = 0; i < rowCount; i++)
-			{
-				int count = Math.Min(maxColumns, holderCount - startIndex);
-				float y = centerY + (i - (rowCount - 1) * 0.5f) * yStep;
-				LayoutRow(holdersInUse, startIndex, count, y, centerX, xStep);
-				startIndex += count;
+				button.Visible = true;
+				SetSkipButtonState(button, isEnabled: true);
+				UpdateSkipButtonLayout(__instance);
+				button.AnimateIn();
 			}
 		}
 
@@ -188,23 +194,6 @@ public static class TreasurePatches
 		private static void Postfix(NTreasureRoomRelicCollection __instance)
 		{
 			EnsureTreasureSkipButton(__instance, out _);
-		}
-	}
-
-	[HarmonyPatch(typeof(NTreasureRoomRelicCollection), nameof(NTreasureRoomRelicCollection.InitializeRelics))]
-	private static class NTreasureRoomRelicCollectionInitializeSkipPatch
-	{
-		private static void Postfix(NTreasureRoomRelicCollection __instance)
-		{
-			if (!EnsureTreasureSkipButton(__instance, out NChoiceSelectionSkipButton? button) || button == null)
-			{
-				return;
-			}
-
-			button.Visible = true;
-			SetSkipButtonState(button, isEnabled: true);
-			UpdateSkipButtonLayout(__instance);
-			button.AnimateIn();
 		}
 	}
 
@@ -278,7 +267,7 @@ public static class TreasurePatches
 		}
 
 		collection.SetSelectionEnabled(isEnabled: false);
-		synchronizer.PickRelicLocally(null);
+		synchronizer.SkipRelicLocally();
 	}
 
 	private static List<NTreasureRoomRelicHolder>? GetHoldersInUse(NTreasureRoomRelicCollection collection)

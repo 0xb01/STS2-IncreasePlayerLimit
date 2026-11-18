@@ -35,26 +35,26 @@ internal static class SerializationMethods
                 && m.GetParameters()[0].ParameterType == typeof(int));
 }
 
-// --- LobbyPlayer SlotId Patches (2 bits -> 4 bits) ---
+// --- StartRunLobbyPlayer SlotId Patches (2 bits -> 4 bits) ---
 
-[HarmonyPatch(typeof(LobbyPlayer), nameof(LobbyPlayer.Serialize))]
-internal static class LobbyPlayerSerializePatch
+[HarmonyPatch(typeof(StartRunLobbyPlayer), nameof(StartRunLobbyPlayer.Serialize))]
+internal static class StartRunLobbyPlayerSerializePatch
 {
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         => TranspilerUtils.ReplaceBitWidthBeforeCall(instructions,
             SerializationMethods.WriteIntWithBits,
             ModConfig.VanillaSlotIdBits, ModConfig.SlotIdBits,
-            nameof(LobbyPlayerSerializePatch));
+            nameof(StartRunLobbyPlayerSerializePatch));
 }
 
-[HarmonyPatch(typeof(LobbyPlayer), nameof(LobbyPlayer.Deserialize))]
-internal static class LobbyPlayerDeserializePatch
+[HarmonyPatch(typeof(StartRunLobbyPlayer), nameof(StartRunLobbyPlayer.Deserialize))]
+internal static class StartRunLobbyPlayerDeserializePatch
 {
     private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         => TranspilerUtils.ReplaceBitWidthBeforeCall(instructions,
             SerializationMethods.ReadIntWithBits,
             ModConfig.VanillaSlotIdBits, ModConfig.SlotIdBits,
-            nameof(LobbyPlayerDeserializePatch));
+            nameof(StartRunLobbyPlayerDeserializePatch));
 }
 
 // --- ClientLobbyJoinResponseMessage Patches (3 bits -> 5 bits) ---

@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Daily;
 using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
@@ -31,21 +32,20 @@ internal static class StartSteamHostPatch
 	typeof(GameMode), typeof(INetGameService), typeof(IStartRunLobbyListener), typeof(int))]
 internal static class StartRunLobbyConstructorPatch
 {
-	private static void Postfix(StartRunLobby __instance, INetGameService netService)
-	{
-		if (netService.Type == NetGameType.Host
-			&& __instance.MaxPlayers < ModConfig.TargetPlayerLimit
-			&& LobbySync.MaxPlayersField != null)
-		{
-			LobbySync.MaxPlayersField.SetValue(__instance, ModConfig.TargetPlayerLimit);
-		}
+	private static void Prefix(ref int maxPlayers) => LobbySync.AdjustMaxPlayers(ref maxPlayers);
 
-		// Bind mod protocol message handler to multiplayer session
-		if (netService.Type is NetGameType.Host or NetGameType.Client)
-		{
-			NetworkProtocol.Bind(netService);
-		}
-	}
+	private static void Postfix(StartRunLobby __instance, INetGameService netService)
+		=> LobbySync.InitializeLobbySession(__instance, netService);
+}
+
+[HarmonyPatch(typeof(StartRunLobby), MethodType.Constructor,
+	typeof(GameMode), typeof(INetGameService), typeof(IStartRunLobbyListener), typeof(TimeServerResult), typeof(int))]
+internal static class StartRunLobby5ParamConstructorPatch
+{
+	private static void Prefix(ref int maxPlayers) => LobbySync.AdjustMaxPlayers(ref maxPlayers);
+
+	private static void Postfix(StartRunLobby __instance, INetGameService netService)
+		=> LobbySync.InitializeLobbySession(__instance, netService);
 }
 
 [HarmonyPatch(typeof(StartRunLobby), "OnConnectedToClientAsHost")]
@@ -66,18 +66,56 @@ internal static class HandleClientLobbyJoinRequestMessagePatch
 internal static class LobbySync
 {
 	internal static readonly FieldInfo? MaxPlayersField =
-		AccessTools.Field(typeof(StartRunLobby), "<MaxPlayers>k__BackingField");
+		AccessTools.Field(typeof(StartRunLobby), "_maxPlayers")
+		?? AccessTools.Field(typeof(StartRunLobby), "<MaxPlayers>k__BackingField");
+
+	internal static void AdjustMaxPlayers(ref int maxPlayers)
+	{
+		if (maxPlayers < ModConfig.TargetPlayerLimit)
+		{
+			maxPlayers = ModConfig.TargetPlayerLimit;
+		}
+	}
+
+	internal static void InitializeLobbySession(StartRunLobby instance, INetGameService netService)
+	{
+		if (netService.Type == NetGameType.Host
+			&& GetMaxPlayers(instance) < ModConfig.TargetPlayerLimit
+			&& MaxPlayersField != null)
+		{
+			SetMaxPlayers(instance, ModConfig.TargetPlayerLimit);
+		}
+
+		if (netService.Type is NetGameType.Host or NetGameType.Client)
+		{
+			NetworkProtocol.Bind(netService);
+		}
+	}
+
+	internal static int GetMaxPlayers(StartRunLobby lobby)
+	{
+		if (MaxPlayersField?.GetValue(lobby) is int val)
+		{
+			return val;
+		}
+		return 0;
+	}
+
+	internal static void SetMaxPlayers(StartRunLobby lobby, int maxPlayers)
+	{
+		MaxPlayersField?.SetValue(lobby, maxPlayers);
+	}
 
 	internal static void SyncLobbyMaxPlayers(StartRunLobby lobby)
 	{
-		if (MaxPlayersField == null || lobby.NetService.Type != NetGameType.Host)
+		if (lobby.NetService.Type != NetGameType.Host)
 		{
 			return;
 		}
 
-		if (lobby.MaxPlayers != ModConfig.TargetPlayerLimit)
+		if (MaxPlayersField != null && GetMaxPlayers(lobby) != ModConfig.TargetPlayerLimit)
 		{
-			MaxPlayersField.SetValue(lobby, ModConfig.TargetPlayerLimit);
+			SetMaxPlayers(lobby, ModConfig.TargetPlayerLimit);
 			SteamLobbyHelper.TryUpdateMemberLimit(lobby.NetService, ModConfig.TargetPlayerLimit);
 		}
 

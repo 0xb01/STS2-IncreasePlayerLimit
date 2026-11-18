@@ -23,6 +23,11 @@ public static class NetworkProtocol
     /// </summary>
     public static void Bind(INetGameService netService)
     {
+        if (_netService == netService)
+        {
+            return;
+        }
+
         Unbind();
         _netService = netService;
         netService.RegisterMessageHandler<ConfigSyncMessage>(HandleConfigSync);
